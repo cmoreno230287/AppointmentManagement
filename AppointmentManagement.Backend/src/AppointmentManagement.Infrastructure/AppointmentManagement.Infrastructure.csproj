@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.AssemblyInfo.cs" />
+    <Compile Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.GlobalUsings.g.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="obj\AppointmentManagement.Infrastructure.csproj.nuget.dgspec.json" />
+    <Content Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.sourcelink.json" />
+    <Content Include="obj\project.assets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.2">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AppointmentManagement.Application\AppointmentManagement.Application.csproj" />
+    <ProjectReference Include="..\AppointmentManagement.Domain\AppointmentManagement.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="obj\AppointmentManagement.Infrastructure.csproj.nuget.g.props" />
+    <None Include="obj\AppointmentManagement.Infrastructure.csproj.nuget.g.targets" />
+    <None Include="obj\Debug\net8.0\Appointm.EA9C8CC0.Up2Date" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.assets.cache" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.dll" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.genruntimeconfig.cache" />
+    <None Include="obj\Debug\net8.0\AppointmentManagement.Infrastructure.pdb" />
+    <None Include="obj\Debug\net8.0\refint\AppointmentManagement.Infrastructure.dll" />
+    <None Include="obj\Debug\net8.0\ref\AppointmentManagement.Infrastructure.dll" />
+    <None Include="obj\project.nuget.cache" />
+  </ItemGroup>
+
+</Project>

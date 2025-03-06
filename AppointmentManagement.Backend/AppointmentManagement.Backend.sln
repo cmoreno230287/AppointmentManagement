@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagement.Api", "src\AppointmentManagement.Api\AppointmentManagement.Api.csproj", "{03E0BF1E-11C9-476C-BC6C-54C7F185A903}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagement.Application", "src\AppointmentManagement.Application\AppointmentManagement.Application.csproj", "{C9557DD2-02B5-4DF1-A46A-5D0D67EA68FE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagement.Domain", "src\AppointmentManagement.Domain\AppointmentManagement.Domain.csproj", "{71DA8011-1E65-4C58-BB19-1FCF7B313E8F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagement.Infrastructure", "src\AppointmentManagement.Infrastructure\AppointmentManagement.Infrastructure.csproj", "{1C6AC7B3-2C92-4345-BE70-E9EA696A9908}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagement.Application.Tests", "tests\AppointmentManagement.Application.Tests\AppointmentManagement.Application.Tests.csproj", "{10948924-8456-4AAF-8302-B0098AA5FDDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppointmentManagement.Infrastructure.Tests", "tests\AppointmentManagement.Infrastructure.Tests\AppointmentManagement.Infrastructure.Tests.csproj", "{1B57CF4E-C8CF-4BA8-8665-B4A402E88ADD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4F5CB225-8FB2-4EE2-A580-477C18840647}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03E0BF1E-11C9-476C-BC6C-54C7F185A903}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03E0BF1E-11C9-476C-BC6C-54C7F185A903}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03E0BF1E-11C9-476C-BC6C-54C7F185A903}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03E0BF1E-11C9-476C-BC6C-54C7F185A903}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9557DD2-02B5-4DF1-A46A-5D0D67EA68FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9557DD2-02B5-4DF1-A46A-5D0D67EA68FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9557DD2-02B5-4DF1-A46A-5D0D67EA68FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9557DD2-02B5-4DF1-A46A-5D0D67EA68FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71DA8011-1E65-4C58-BB19-1FCF7B313E8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71DA8011-1E65-4C58-BB19-1FCF7B313E8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71DA8011-1E65-4C58-BB19-1FCF7B313E8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71DA8011-1E65-4C58-BB19-1FCF7B313E8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C6AC7B3-2C92-4345-BE70-E9EA696A9908}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C6AC7B3-2C92-4345-BE70-E9EA696A9908}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C6AC7B3-2C92-4345-BE70-E9EA696A9908}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C6AC7B3-2C92-4345-BE70-E9EA696A9908}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10948924-8456-4AAF-8302-B0098AA5FDDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10948924-8456-4AAF-8302-B0098AA5FDDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10948924-8456-4AAF-8302-B0098AA5FDDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10948924-8456-4AAF-8302-B0098AA5FDDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B57CF4E-C8CF-4BA8-8665-B4A402E88ADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B57CF4E-C8CF-4BA8-8665-B4A402E88ADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B57CF4E-C8CF-4BA8-8665-B4A402E88ADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B57CF4E-C8CF-4BA8-8665-B4A402E88ADD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{10948924-8456-4AAF-8302-B0098AA5FDDE} = {4F5CB225-8FB2-4EE2-A580-477C18840647}
+		{1B57CF4E-C8CF-4BA8-8665-B4A402E88ADD} = {4F5CB225-8FB2-4EE2-A580-477C18840647}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8097A90D-B0AF-4FBF-9E51-D2EFA07EEA8D}
+	EndGlobalSection
+EndGlobal

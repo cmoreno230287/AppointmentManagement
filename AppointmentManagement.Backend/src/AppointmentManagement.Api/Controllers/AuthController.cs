@@ -1,11 +1,6 @@
-﻿using AppointmentManagement.Application.Interfaces.Persistence;
-using AppointmentManagement.Domain.Entities;
+﻿using AppointmentManagement.Application.DTOs.Requests.Auth;
+using AppointmentManagement.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using AppointmentManagement.Api.Requests;
 
 namespace AppointmentManagement.Api.Controllers
 {
@@ -13,53 +8,31 @@ namespace AppointmentManagement.Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IConfiguration _configuration;
+        private readonly IAuthService _authService;
 
-        public AuthController(IUserRepository userRepository, IConfiguration configuration)
+        public AuthController(IAuthService authService)
         {
-            _userRepository = userRepository;
-            _configuration = configuration;
+            _authService = authService;
         }
 
         /// <summary>
-        /// User Login
+        /// Authenticate a user and return access & refresh tokens.
         /// </summary>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var user = await _userRepository.GetByEmailAsync(request.Email);
-            //if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-            if (user == null || request.Password != user.PasswordHash)
-                return Unauthorized("Invalid credentials.");
-
-            var token = GenerateJwtToken(user);
-            return Ok(new { Token = token });
+            var response = await _authService.AuthenticateUserAsync(request);
+            return response.Success ? Ok(response) : Unauthorized(response);
         }
 
-        private string GenerateJwtToken(User user)
+        /// <summary>
+        /// Refresh an expired access token using a valid refresh token.
+        /// </summary>
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
         {
-            var jwtSettings = _configuration.GetSection("JwtSettings");
-            var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
-            var expiration = DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings["ExpirationMinutes"]));
-
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("username", user.Username)
-            };
-
-            var credentials = new SigningCredentials(new SymmetricSecurityKey(secretKey), SecurityAlgorithms.HmacSha256);
-            var tokenDescriptor = new JwtSecurityToken(
-                issuer: jwtSettings["Issuer"],
-                audience: jwtSettings["Audience"],
-                claims: claims,
-                expires: expiration,
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+            var response = await _authService.RefreshTokenAsync(request.Token, request.RefreshToken);
+            return response.Success ? Ok(response) : Unauthorized(response);
         }
     }
 }

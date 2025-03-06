@@ -48,6 +48,7 @@ var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
 
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddSingleton<EncryptionService>();
 
 builder.Services.AddAuthentication(options =>

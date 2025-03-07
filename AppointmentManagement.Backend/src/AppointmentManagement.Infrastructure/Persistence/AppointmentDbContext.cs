@@ -13,6 +13,7 @@ namespace AppointmentManagement.Infrastructure.Persistence
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UsersRoles { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -29,6 +30,7 @@ namespace AppointmentManagement.Infrastructure.Persistence
             var managerRoleId = new Guid("5984a644-b3ef-4a8c-84f5-e3bd4d5180d5");
             var adminUserId = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444");
             var createdAt = new DateTime(2024, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+            var usersRolesId = new Guid("0609922a-2358-466c-82c3-e20fc23ba488");
 
             // Seed Roles
             modelBuilder.Entity<Role>().HasData(
@@ -44,12 +46,50 @@ namespace AppointmentManagement.Infrastructure.Persistence
                     Identifier = adminUserId,
                     Username = "admin",
                     Email = "admin@example.com",
-                    PasswordHash = "Admin@123", //BCrypt.Net.BCrypt.HashPassword("Admin@123"), // Hash the password
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), // Hash the password
                     IsActive = true,
                     CreatedAt = createdAt,
                     UpdatedAt = null,
                     UpdatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
                     CreatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444")
+                },
+                new User
+                {
+                    Id = 2,
+                    Identifier = adminUserId,
+                    Username = "cmoreno",
+                    Email = "carlos@gmail.com",
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("abc123$"), // Hash the password
+                    IsActive = true,
+                    CreatedAt = createdAt,
+                    UpdatedAt = null,
+                    UpdatedBy = adminUserId,
+                    CreatedBy = adminUserId
+                }
+            );
+
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole
+                {
+                    Id = 1,
+                    Identifier = usersRolesId,
+                    RoleId = 1,
+                    UserId = 1,
+                    CreatedAt = createdAt,
+                    UpdatedAt = null,
+                    UpdatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
+                    CreatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444")
+                }, 
+                new UserRole
+                {
+                    Id = 2,
+                    Identifier = usersRolesId,
+                    RoleId = 2,
+                    UserId = 2,
+                    CreatedAt = createdAt,
+                    UpdatedAt = null,
+                    UpdatedBy = new Guid("7eb9a3f6-d1a3-43a9-b0ba-b637a060c69a"),
+                    CreatedBy = new Guid("fc0874da-11cd-4a44-9865-d9d65f39adcd")
                 }
             );
 

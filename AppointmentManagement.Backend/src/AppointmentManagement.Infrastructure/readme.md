@@ -57,7 +57,7 @@ Open `src/AppointmentManagement.Api/appsettings.json` and update the **database 
 Navigate to the project root and generate a new migration:
 
 ```sh
-dotnet ef migrations add InitialCreate --project src/AppointmentManagement.Infrastructure --startup-project src/AppointmentManagement.Api
+dotnet ef migrations add InitialCreate --project src/AppointmentManagement.Infrastructure --startup-project src/AppointmentManagement.Api --msbuildprojectextensionspath src/AppointmentManagement.Infrastructure/obj
 ```
 
 If successful, you should see a new migration file under:

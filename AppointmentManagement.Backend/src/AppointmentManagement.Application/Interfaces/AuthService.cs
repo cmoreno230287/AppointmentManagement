@@ -15,6 +15,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AppointmentManagement.Application.DTOs.Common.Extensions;
 
 namespace AppointmentManagement.Application.Services
 {
@@ -89,11 +90,13 @@ namespace AppointmentManagement.Application.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSettings.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            var userRole = _userRepository.GetUserWithRolesAsync(user.Id).Result;
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("username", user.Username)
+                new Claim("username", user.Username),
+                new Claim("roles", userRole.Select(s => s.Role.Name).ToCommaSeparatedString())
             };
 
             var token = new JwtSecurityToken(

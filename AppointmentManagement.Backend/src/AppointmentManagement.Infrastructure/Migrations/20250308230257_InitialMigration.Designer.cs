@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppointmentManagement.Infrastructure.Migrations
 {
     [DbContext(typeof(AppointmentDbContext))]
-    [Migration("20250307032940_AddUserRoleTable")]
-    partial class AddUserRoleTable
+    [Migration("20250308230257_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,16 +46,17 @@ namespace AppointmentManagement.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("Identifier")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("ManagerId")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<int>("Status")
+                        .HasMaxLength(100)
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -64,12 +65,9 @@ namespace AppointmentManagement.Infrastructure.Migrations
                     b.Property<Guid>("UpdatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
                 });
 
             modelBuilder.Entity("AppointmentManagement.Domain.Entities.Role", b =>
@@ -88,14 +86,18 @@ namespace AppointmentManagement.Infrastructure.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
 
                     b.Property<Guid>("Identifier")
-                        .HasColumnType("uniqueidentifier");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -110,13 +112,13 @@ namespace AppointmentManagement.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 3, 7, 3, 29, 39, 770, DateTimeKind.Utc).AddTicks(3549),
+                            CreatedAt = new DateTime(2025, 3, 8, 23, 2, 56, 276, DateTimeKind.Utc).AddTicks(356),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Description = "Regular User",
                             Identifier = new Guid("ad3d695e-726a-4985-970c-b8cacf61b730"),
@@ -126,7 +128,7 @@ namespace AppointmentManagement.Infrastructure.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 3, 7, 3, 29, 39, 770, DateTimeKind.Utc).AddTicks(4241),
+                            CreatedAt = new DateTime(2025, 3, 8, 23, 2, 56, 276, DateTimeKind.Utc).AddTicks(1089),
                             CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
                             Description = "Appointment Manager",
                             Identifier = new Guid("5984a644-b3ef-4a8c-84f5-e3bd4d5180d5"),
@@ -195,10 +197,62 @@ namespace AppointmentManagement.Infrastructure.Migrations
                             Email = "admin@example.com",
                             Identifier = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
                             IsActive = true,
-                            PasswordHash = "$2a$11$BbBimWmj8bU02CfGZQEexesPs2AYL8JNqkYQgznj3K/wIGiwcoQN2",
+                            PasswordHash = "$2a$11$jqu5WeO2OBIx15czbb2yA.LpT/41ouqwdgLGQVCXBqfhTHQKvurRS",
                             UpdatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
                             Username = "admin"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
+                            Email = "carlos@gmail.com",
+                            Identifier = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
+                            IsActive = true,
+                            PasswordHash = "$2a$11$GLaVC.pKHimQqsvXGH.AS..UAZgN1wAobKUOKVqtwZszKP1lj22X.",
+                            UpdatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
+                            Username = "cmoreno"
                         });
+                });
+
+            modelBuilder.Entity("AppointmentManagement.Domain.Entities.UserAppointments", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("Identifier")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("UpdatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserAppointments", (string)null);
                 });
 
             modelBuilder.Entity("AppointmentManagement.Domain.Entities.UserRole", b =>
@@ -245,9 +299,19 @@ namespace AppointmentManagement.Infrastructure.Migrations
                             CreatedAt = new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc),
                             CreatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
                             Identifier = new Guid("0609922a-2358-466c-82c3-e20fc23ba488"),
-                            RoleId = 1,
+                            RoleId = 2,
                             UpdatedBy = new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"),
                             UserId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc),
+                            CreatedBy = new Guid("fc0874da-11cd-4a44-9865-d9d65f39adcd"),
+                            Identifier = new Guid("0609922a-2358-466c-82c3-e20fc23ba488"),
+                            RoleId = 1,
+                            UpdatedBy = new Guid("7eb9a3f6-d1a3-43a9-b0ba-b637a060c69a"),
+                            UserId = 2
                         });
                 });
 
@@ -256,6 +320,25 @@ namespace AppointmentManagement.Infrastructure.Migrations
                     b.HasOne("AppointmentManagement.Domain.Entities.User", null)
                         .WithMany("Roles")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("AppointmentManagement.Domain.Entities.UserAppointments", b =>
+                {
+                    b.HasOne("AppointmentManagement.Domain.Entities.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AppointmentManagement.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AppointmentManagement.Domain.Entities.UserRole", b =>

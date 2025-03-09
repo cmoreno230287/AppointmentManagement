@@ -2,8 +2,8 @@
 
 namespace AppointmentManagement.Application.Interfaces.Persistence
 {
-    public interface IAppointmentRepository : IRepository<Appointment>
+    public interface IAppointmentRepository : IGenericRepository<Appointment>
     {
-        Task<IEnumerable<Appointment>> GetAppointmentsByUserIdAsync(int userId);
+        Task<IEnumerable<UserAppointments>> GetAppointmentsByUserIdAsync(int userId);
     }
 }

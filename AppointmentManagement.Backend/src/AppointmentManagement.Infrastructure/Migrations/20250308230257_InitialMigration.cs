@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AppointmentManagement.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserRoleTable : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,13 +19,11 @@ namespace AppointmentManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    ManagerId = table.Column<int>(type: "int", nullable: true),
                     AppointmentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AppointmentTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Identifier = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Status = table.Column<int>(type: "int", maxLength: 100, nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
+                    Identifier = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -63,10 +61,10 @@ namespace AppointmentManagement.Infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    Identifier = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Identifier = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -80,6 +78,37 @@ namespace AppointmentManagement.Infrastructure.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAppointments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    AppointmentId = table.Column<int>(type: "int", nullable: false),
+                    Identifier = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UpdatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAppointments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserAppointments_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAppointments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -118,23 +147,41 @@ namespace AppointmentManagement.Infrastructure.Migrations
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Description", "Identifier", "Name", "UpdatedAt", "UpdatedBy", "UserId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(2025, 3, 7, 3, 29, 39, 770, DateTimeKind.Utc).AddTicks(3549), new Guid("00000000-0000-0000-0000-000000000000"), "Regular User", new Guid("ad3d695e-726a-4985-970c-b8cacf61b730"), "User", null, new Guid("00000000-0000-0000-0000-000000000000"), null },
-                    { 2, new DateTime(2025, 3, 7, 3, 29, 39, 770, DateTimeKind.Utc).AddTicks(4241), new Guid("00000000-0000-0000-0000-000000000000"), "Appointment Manager", new Guid("5984a644-b3ef-4a8c-84f5-e3bd4d5180d5"), "Manager", null, new Guid("00000000-0000-0000-0000-000000000000"), null }
+                    { 1, new DateTime(2025, 3, 8, 23, 2, 56, 276, DateTimeKind.Utc).AddTicks(356), new Guid("00000000-0000-0000-0000-000000000000"), "Regular User", new Guid("ad3d695e-726a-4985-970c-b8cacf61b730"), "User", null, new Guid("00000000-0000-0000-0000-000000000000"), null },
+                    { 2, new DateTime(2025, 3, 8, 23, 2, 56, 276, DateTimeKind.Utc).AddTicks(1089), new Guid("00000000-0000-0000-0000-000000000000"), "Appointment Manager", new Guid("5984a644-b3ef-4a8c-84f5-e3bd4d5180d5"), "Manager", null, new Guid("00000000-0000-0000-0000-000000000000"), null }
                 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Email", "Identifier", "IsActive", "PasswordHash", "UpdatedAt", "UpdatedBy", "Username" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc), new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), "admin@example.com", new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), true, "$2a$11$BbBimWmj8bU02CfGZQEexesPs2AYL8JNqkYQgznj3K/wIGiwcoQN2", null, new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), "admin" });
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc), new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), "admin@example.com", new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), true, "$2a$11$jqu5WeO2OBIx15czbb2yA.LpT/41ouqwdgLGQVCXBqfhTHQKvurRS", null, new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), "admin" },
+                    { 2, new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc), new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), "carlos@gmail.com", new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), true, "$2a$11$GLaVC.pKHimQqsvXGH.AS..UAZgN1wAobKUOKVqtwZszKP1lj22X.", null, new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), "cmoreno" }
+                });
 
             migrationBuilder.InsertData(
                 table: "UserRoles",
                 columns: new[] { "Id", "CreatedAt", "CreatedBy", "Identifier", "RoleId", "UpdatedAt", "UpdatedBy", "UserId" },
-                values: new object[] { 1, new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc), new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), new Guid("0609922a-2358-466c-82c3-e20fc23ba488"), 1, null, new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), 1 });
+                values: new object[,]
+                {
+                    { 1, new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc), new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), new Guid("0609922a-2358-466c-82c3-e20fc23ba488"), 2, null, new Guid("ecf36fea-59a0-42b6-9005-e4c09e421444"), 1 },
+                    { 2, new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc), new Guid("fc0874da-11cd-4a44-9865-d9d65f39adcd"), new Guid("0609922a-2358-466c-82c3-e20fc23ba488"), 1, null, new Guid("7eb9a3f6-d1a3-43a9-b0ba-b637a060c69a"), 2 }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Roles_UserId",
                 table: "Roles",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAppointments_AppointmentId",
+                table: "UserAppointments",
+                column: "AppointmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserAppointments_UserId",
+                table: "UserAppointments",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -158,10 +205,13 @@ namespace AppointmentManagement.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Appointments");
+                name: "UserAppointments");
 
             migrationBuilder.DropTable(
                 name: "UserRoles");
+
+            migrationBuilder.DropTable(
+                name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "Roles");

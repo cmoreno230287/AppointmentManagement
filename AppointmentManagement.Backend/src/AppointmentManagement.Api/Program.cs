@@ -11,6 +11,9 @@ using AppointmentManagement.Application.Services;
 using Serilog;
 using AppointmentManagement.Application.Services.Common;
 using AppointmentManagement.Application.Configuration;
+using AppointmentManagement.Api.Middleware;
+using AppointmentManagement.Application.Interfaces.Persistence;
+using AppointmentManagement.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,9 +49,17 @@ builder.Services.AddEndpointsApiExplorer();
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"]);
 
+// Register repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IUserAppointmentRepository, UserAppointmentRepository>();
+
 // Register services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddSingleton<EncryptionService>();
 
 builder.Services.AddAuthentication(options =>
@@ -105,6 +116,9 @@ builder.Configuration.Bind(appSettings);
 builder.Services.AddSingleton(appSettings);
 
 var app = builder.Build();
+
+// Activate Unauthorized Access Logging Middleware
+app.UseMiddleware<UnauthorizedAccessLoggingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

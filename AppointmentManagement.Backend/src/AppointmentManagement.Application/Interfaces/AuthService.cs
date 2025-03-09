@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AppointmentManagement.Application.DTOs.Common.Extensions;
+using System.Data;
 
 namespace AppointmentManagement.Application.Services
 {
@@ -37,17 +38,19 @@ namespace AppointmentManagement.Application.Services
 
         public async Task<ApiResponse<LoginResponse>> AuthenticateUserAsync(LoginRequest request)
         {
-            _logger.LogInformation($"Authenticating user: {request.Email}");
+            _logger.LogInformation($"Attempting to authenticate user: {request.Email}");
 
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user == null || !_encryptionService.VerifyPassword(request.Password, user.PasswordHash))
             {
-                _logger.LogWarning("Invalid email or password.");
+                _logger.LogWarning($"Authentication failed for user {request.Email}: Invalid credentials.");
                 return ApiResponse<LoginResponse>.ErrorResponse("Invalid email or password.");
             }
 
             var token = GenerateJwtToken(user);
             var refreshToken = GenerateRefreshToken(user.Id);
+
+            _logger.LogInformation($"User {request.Email} authenticated successfully.");
 
             return ApiResponse<LoginResponse>.SuccessResponse(new LoginResponse
             {
@@ -59,10 +62,11 @@ namespace AppointmentManagement.Application.Services
 
         public async Task<ApiResponse<LoginResponse>> RefreshTokenAsync(string token, string refreshToken)
         {
+            _logger.LogInformation("Attempting to refresh access token.");
             var principal = GetPrincipalFromExpiredToken(token);
             if (principal == null || !_refreshTokens.TryGetValue(refreshToken, out var storedToken) || storedToken != token)
             {
-                _logger.LogWarning("Invalid refresh token attempt.");
+                _logger.LogWarning("Refresh token validation failed: Invalid or expired token.");
                 return ApiResponse<LoginResponse>.ErrorResponse("Invalid refresh token.");
             }
 
@@ -70,12 +74,15 @@ namespace AppointmentManagement.Application.Services
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
             {
+                _logger.LogWarning("Refresh token validation failed: User not found.");
                 return ApiResponse<LoginResponse>.ErrorResponse("User not found.");
             }
 
             var newToken = GenerateJwtToken(user);
             var newRefreshToken = GenerateRefreshToken(user.Id);
             _refreshTokens.TryRemove(refreshToken, out _);
+
+            _logger.LogInformation($"Access token refreshed successfully for user ID {userId}.");
 
             return ApiResponse<LoginResponse>.SuccessResponse(new LoginResponse
             {
@@ -90,14 +97,20 @@ namespace AppointmentManagement.Application.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSettings.Secret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var userRole = _userRepository.GetUserWithRolesAsync(user.Id).Result;
-            var claims = new[]
+            var userRoles = _userRepository.GetUserWithRolesAsync(user.Id).Result;
+            var roles = userRoles?.Select(ur => ur.Role.Name).ToList() ?? new List<string>();
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("username", user.Username),
-                new Claim("roles", userRole.Select(s => s.Role.Name).ToCommaSeparatedString())
+                new Claim("username", user.Username)
             };
+
+            // Add roles to claims
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: _appSettings.JwtSettings.Issuer,
@@ -106,6 +119,8 @@ namespace AppointmentManagement.Application.Services
                 expires: DateTime.UtcNow.AddMinutes(_appSettings.JwtSettings.ExpirationMinutes),
                 signingCredentials: credentials
             );
+
+            _logger.LogInformation($"JWT token issued for user {user.Email} with roles: {string.Join(", ", roles)}.");
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -119,26 +134,35 @@ namespace AppointmentManagement.Application.Services
 
         private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
-            var tokenValidationParameters = new TokenValidationParameters
+            try
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidIssuer = _appSettings.JwtSettings.Issuer,
-                ValidAudience = _appSettings.JwtSettings.Audience,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSettings.Secret)),
-                ValidateLifetime = false
-            };
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = _appSettings.JwtSettings.Issuer,
+                    ValidAudience = _appSettings.JwtSettings.Audience,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSettings.Secret)),
+                    ValidateLifetime = false
+                };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
 
-            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _logger.LogWarning("JWT token validation failed: Invalid algorithm or tampered token.");
+                    return null;
+                }
+
+                return principal;
+            }
+            catch (Exception ex)
             {
+                _logger.LogError($"JWT token validation error: {ex.Message}");
                 return null;
             }
-
-            return principal;
         }
     }
 }

@@ -8,8 +8,8 @@ namespace AppointmentManagement.Domain.Enums
 {
     public enum AppointmentStatus
     {
-        Pending,
-        Approved,
-        Canceled
+        Pending = 1,
+        Approved = 2,
+        Canceled = 3
     }
 }

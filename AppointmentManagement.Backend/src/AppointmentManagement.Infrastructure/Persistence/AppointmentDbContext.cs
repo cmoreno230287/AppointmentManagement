@@ -15,6 +15,7 @@ namespace AppointmentManagement.Infrastructure.Persistence
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UsersRoles { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<UserAppointments> UserAppointments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -46,7 +47,7 @@ namespace AppointmentManagement.Infrastructure.Persistence
                     Identifier = adminUserId,
                     Username = "admin",
                     Email = "admin@example.com",
-                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("Admin@123"), // Hash the password
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword("abc123$"), // Hash the password
                     IsActive = true,
                     CreatedAt = createdAt,
                     UpdatedAt = null,
@@ -73,7 +74,7 @@ namespace AppointmentManagement.Infrastructure.Persistence
                 {
                     Id = 1,
                     Identifier = usersRolesId,
-                    RoleId = 1,
+                    RoleId = 2,
                     UserId = 1,
                     CreatedAt = createdAt,
                     UpdatedAt = null,
@@ -84,7 +85,7 @@ namespace AppointmentManagement.Infrastructure.Persistence
                 {
                     Id = 2,
                     Identifier = usersRolesId,
-                    RoleId = 2,
+                    RoleId = 1,
                     UserId = 2,
                     CreatedAt = createdAt,
                     UpdatedAt = null,

@@ -2,10 +2,11 @@
 using AppointmentManagement.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AppointmentManagement.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Manager")]
     [Route("api/v1/users")]
     [ApiController]
     public class UsersController : ControllerBase
@@ -17,6 +18,7 @@ namespace AppointmentManagement.Api.Controllers
             _userService = userService;
         }
 
+        [Authorize(Roles = "Manager")]
         [HttpGet]
         public async Task<IActionResult> GetAllUsers() => Ok(await _userService.GetAllUsersAsync());
 
@@ -27,6 +29,15 @@ namespace AppointmentManagement.Api.Controllers
             return user != null ? Ok(user) : NotFound();
         }
 
+        [HttpGet("me")]
+        public async Task<IActionResult> GetUserInformationByCurrentUserId()
+        {
+            int userId = int.Parse(HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            var user = await _userService.GetUserByIdAsync(userId);
+            return user != null ? Ok(user) : NotFound();
+        }
+
+        [Authorize(Roles = "Manager")]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
         {

@@ -13,9 +13,6 @@ namespace AppointmentManagement.Application.DTOs.Requests.Appointment
         public string Note { get; set; } = string.Empty;
 
         [Required]
-        public string? Status { get; set; }
-
-        [Required]
         public DateTime AppointmentDate { get; set; }
     }
 }

@@ -121,7 +121,6 @@ namespace AppointmentManagement.Application.Services
 
             appointment.Notes = request.Note;
             appointment.AppointmentDate = request.AppointmentDate;
-            appointment.Status = Enum.Parse<AppointmentStatus>(request.Status);
 
             await _appointmentRepository.UpdateAsync(appointment);
 

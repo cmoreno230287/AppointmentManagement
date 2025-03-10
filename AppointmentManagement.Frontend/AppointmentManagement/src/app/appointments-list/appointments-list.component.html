@@ -1,0 +1,13 @@
+<div class="container">
+  <h2>Appointment List</h2>
+  <ag-grid-angular
+    class="ag-theme-alpine"
+    style="width: 800px; height: 400px;"
+    [rowData]="appointments()"
+    [columnDefs]="colDefs"
+    [defaultColDef]="defaultColDef"
+    [pagination]="true"
+    [paginationPageSize]="10"
+    [modules]="modules"
+  ></ag-grid-angular>
+</div>

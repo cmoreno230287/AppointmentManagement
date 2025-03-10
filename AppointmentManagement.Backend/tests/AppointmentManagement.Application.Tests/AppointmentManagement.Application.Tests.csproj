@@ -19,6 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\AppointmentManagement.Application\AppointmentManagement.Application.csproj" />
+    <ProjectReference Include="..\..\src\AppointmentManagement.Domain\AppointmentManagement.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

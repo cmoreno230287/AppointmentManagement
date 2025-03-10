@@ -1,0 +1,51 @@
+<div class="form-container">
+    <h2>Create Appointment</h2>
+  
+    <form [formGroup]="appointmentForm" (ngSubmit)="createAppointment()">
+      
+      <!-- User Selection -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select User</mat-label>
+        <mat-select formControlName="userId">
+          <mat-option *ngFor="let user of users$ | async" [value]="user.id">
+            {{ user.username }}
+          </mat-option>
+        </mat-select>
+        <div *ngIf="appointmentForm.controls.userId.invalid && appointmentForm.controls.userId.touched" class="error">
+          User is required
+        </div>
+      </mat-form-field>
+  
+      <!-- Notes Input -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Notes</mat-label>
+        <textarea matInput formControlName="note" rows="3"></textarea>
+        <div *ngIf="appointmentForm.controls.note.invalid && appointmentForm.controls.note.touched" class="error">
+          Note must be at least 5 characters
+        </div>
+      </mat-form-field>
+  
+      <!-- Date & Time Picker -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Appointment Date & Time</mat-label>
+        <input matInput [matDatepicker]="picker" formControlName="appointmentDate">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <div *ngIf="appointmentForm.controls.appointmentDate.invalid && appointmentForm.controls.appointmentDate.touched" class="error">
+          Appointment date is required
+        </div>
+      </mat-form-field>
+  
+      <!-- Error Message -->
+      <div *ngIf="error()" class="error">
+        {{ error() }}
+      </div>
+  
+      <!-- Submit Button -->
+      <button mat-raised-button color="primary" type="submit" [disabled]="appointmentForm.invalid || loading()">
+        {{ loading() ? 'Creating...' : 'Create Appointment' }}
+      </button>
+  
+    </form>
+  </div>
+  
